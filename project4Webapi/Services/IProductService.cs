@@ -12,7 +12,7 @@ namespace project4Webapi
     {
         public Task<List<GetProductDto>> Get();
         public Task<List<GetProductDto>> AddProduct(AddProductDto newProduct);
-        public Task<GetProductDto> UpdateProduct(UpdateProductDto updatedProduct);
+        public Task<GetProductDto> UpdateProduct(int id, UpdateProductDto updatedProduct);
         public Task<List<GetProductDto>> DeleteProduct(int id);
     }
 }

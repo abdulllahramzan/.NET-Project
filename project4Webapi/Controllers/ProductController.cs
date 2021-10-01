@@ -21,7 +21,7 @@ namespace project4Webapi.Controllers
             _productService = productService;
         }
 
-       [HttpGet("Get")]
+       [HttpGet]
         public async Task<ActionResult<List<GetProductDto>>> Get()
         {
             return Ok(await _productService.Get());
@@ -34,11 +34,11 @@ namespace project4Webapi.Controllers
             return Ok(await _productService.AddProduct(newProduct));
         }
 
-        [HttpPut("Update")]
+        [HttpPut("{id}")]
       
-        public async Task<ActionResult<GetProductDto>> UpdateProduct(UpdateProductDto updatedProduct)
+        public async Task<ActionResult<GetProductDto>> UpdateProduct(int id, UpdateProductDto updatedProduct)
         {
-            return Ok(await _productService.UpdateProduct(updatedProduct));
+            return Ok(await _productService.UpdateProduct(id, updatedProduct));
         }
 
         [HttpDelete("{id}")]

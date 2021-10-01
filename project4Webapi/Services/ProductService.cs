@@ -64,13 +64,15 @@ namespace project4Webapi.Services
             return response;
         }
 
-        public async Task<GetProductDto> UpdateProduct(UpdateProductDto updatedProduct)
+        public async Task<GetProductDto> UpdateProduct(int id, UpdateProductDto updatedProduct)
         {
             Product product = await _context.Products
                 .Include(c => c.User)
                 .FirstOrDefaultAsync(c => c.ProdId == updatedProduct.ProdId);
+            
             if (product.User.Id == GetUserId())
             {
+               
                 product.ProdName = updatedProduct.ProdName;
                 product.ProdPrice = updatedProduct.ProdPrice;
                 await _context.SaveChangesAsync();
