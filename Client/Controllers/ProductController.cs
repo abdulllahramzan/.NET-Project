@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Net.Http.Json;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -46,7 +47,7 @@ namespace Client.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult>  Create(Product product)
         {
-            string baseUrl = "https://localhost:44369/Product";
+            string baseUrl = "https://localhost:44369/Product/Add";
             var accesstoken = HttpContext.Session.GetString("JWToken");
             var url = baseUrl;
             HttpClient client = new HttpClient();
@@ -61,6 +62,7 @@ namespace Client.Controllers
 
         public async Task<IActionResult> Edit(int? id)
         {
+            
             if (id == null)
             {
                 return NotFound();
@@ -72,7 +74,7 @@ namespace Client.Controllers
             HttpClient client = new HttpClient();
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accesstoken);
             string jsonStr = await client.GetStringAsync(url);
-            var res = JsonConvert.DeserializeObject<List<Product>>(jsonStr);
+            var res = JsonConvert.DeserializeObject<Product>(jsonStr);
             if (res == null)
             {
                 return NotFound();
@@ -81,16 +83,16 @@ namespace Client.Controllers
             return View(res);
         }
 
-        [HttpPut]
-         [ValidateAntiForgeryToken]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, Product product)
         {
+
             string baseUrl = "https://localhost:44369/Product/";
             var accesstoken = HttpContext.Session.GetString("JWToken");
-            var url = baseUrl + id;
+            var url = baseUrl + id.ToString();
             HttpClient client = new HttpClient();
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accesstoken);
-
             var stringContent = new StringContent(JsonConvert.SerializeObject(product), Encoding.UTF8, "application/json");
             await client.PutAsync(url, stringContent);
 
@@ -103,34 +105,37 @@ namespace Client.Controllers
             {
                 return NotFound();
             }
-            string baseUrl = "https://localhost:44369/Product/Delete";
+            string baseUrl = "https://localhost:44369/Product/";
             var accesstoken = HttpContext.Session.GetString("JWToken");
             var url = baseUrl + id;
             HttpClient client = new HttpClient();
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accesstoken);
 
             string JsonStr = await client.GetStringAsync(url);
+           
             var res = JsonConvert.DeserializeObject<Product>(JsonStr);
+          
             if (res == null)
             {
                 return NotFound();
             }
-
-            return View(res);
+            
+              return View(res);              
         }
-
-        [HttpDelete, ActionName("Delete")]
+        [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            string baseUrl = "https://localhost:44369/Product/Delete";
+         
+            string baseUrl = "https://localhost:44369/Product/";
             var accesstoken = HttpContext.Session.GetString("JWToken");
             var url = baseUrl + id;
             HttpClient client = new HttpClient();
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accesstoken);
+            string JsonStr = await client.GetStringAsync(url);
+            JsonConvert.DeserializeObject<Product>(JsonStr);
             await client.DeleteAsync(url);
-
-            return RedirectToAction("Product");
+            return RedirectToAction("product");
         }
     }
 }

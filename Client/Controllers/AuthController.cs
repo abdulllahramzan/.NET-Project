@@ -24,15 +24,26 @@ namespace Client.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Register(RegisterDto registerDto)
+        public  ActionResult Register( RegisterDto registerDto)
         {
-            using ( var client = new HttpClient())
+      
+            if (ModelState.IsValid )
             {
-                client.BaseAddress = new Uri("https://localhost:44369/Auth/Register");
-           
-                var responseTask = await client.PostAsJsonAsync<RegisterDto>("registerDto", registerDto);
-                return View();
+                HttpClient hc = new HttpClient();
+                hc.BaseAddress = new Uri("https://localhost:44369/Auth/Register");
+                var insertrec = hc.PostAsJsonAsync<RegisterDto>("/Auth/Register", registerDto);
+                insertrec.Wait();
+                var saverec = insertrec.Result;
+                if (saverec.IsSuccessStatusCode)
+                {
+                    ViewBag.Message = "The User " + " ' "+ registerDto.Username + " ' " + "is Registered succesfully";
+                    return View();
+                }
             }
+
+            ModelState.AddModelError(string.Empty, "Server Error. Please contact administrator.");
+            //ViewBag.invalid = "The User " + " ' " + registerDto.Username + " ' " + "is Already Exists !!";
+            return View();
         }
         public IActionResult Login()
         {

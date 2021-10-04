@@ -6,12 +6,12 @@
 
 <h1>Register</h1>
 
+
 <hr />
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Register">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-           
             <div class="form-group">
                 <label asp-for="Username" class="control-label"></label>
                 <input asp-for="Username" class="form-control" />
@@ -28,10 +28,8 @@
         </form>
     </div>
 </div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+<h5 style="align-content: center !important; color : dimgrey">@ViewBag.Message</h5>
+<h5 style="align-content: center !important; color : darkred">@ViewBag.invalid</h5>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

@@ -63,16 +63,21 @@ namespace project4Webapi.Services
             var response = dbProducts.Select(c => _mapper.Map<GetProductDto>(c)).ToList();
             return response;
         }
-
+        public async Task<GetProductDto> GetById(int id)
+        {
+            var dbProducts = await _context.Products.FirstOrDefaultAsync(c => c.ProdId == id && c.User.Id == GetUserId());
+            var response = _mapper.Map<GetProductDto>(dbProducts);
+            return response;
+        }
         public async Task<GetProductDto> UpdateProduct(int id, UpdateProductDto updatedProduct)
         {
+            updatedProduct.ProdId = id;
             Product product = await _context.Products
                 .Include(c => c.User)
                 .FirstOrDefaultAsync(c => c.ProdId == updatedProduct.ProdId);
-            
+              
             if (product.User.Id == GetUserId())
             {
-               
                 product.ProdName = updatedProduct.ProdName;
                 product.ProdPrice = updatedProduct.ProdPrice;
                 await _context.SaveChangesAsync();
@@ -86,5 +91,6 @@ namespace project4Webapi.Services
 
 
         }
+       
     }
 }
