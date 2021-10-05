@@ -15,11 +15,7 @@ namespace project4Webapi.Services
 {
     public class ProductService : IProductService
     {
-        private static List<Product> products = new List<Product>
-            {
-             new Product(),
-             new Product {ProdId = 1 ,ProdName = "Nike"}
-            };
+        
 
         private readonly IMapper _mapper;
         private readonly DataContext _context;

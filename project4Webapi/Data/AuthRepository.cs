@@ -56,8 +56,9 @@ namespace project4Webapi.Data
         }
 
         public async Task<string> Register(User user)
-        { 
-            if(await UserExists(user.Username))
+        {
+            bool userAlreadyExists = await _context.Users.AnyAsync(x => x.Username == user.Username);
+            if(userAlreadyExists == true)
             {
                 string response = "user already exists.";
                 return response;
@@ -69,14 +70,14 @@ namespace project4Webapi.Data
         }
 
 
-        public async Task<bool> UserExists(string username)
-        {
-            if(await _context.Users.AnyAsync(x => x.Username.ToLower().Equals(username.ToLower())))
-            {
-                return true;
-            }
-            return false;
-        }
+        //public async Task<bool> UserExists(string username)
+        //{
+        //    if (await _context.Users.AnyAsync(x => x.Username.ToLower().Equals(username.ToLower())))
+        //    {
+        //        return true;
+        //    }
+        //    return false;
+        //}
 
         //private string CreateToken(User user)
         // {

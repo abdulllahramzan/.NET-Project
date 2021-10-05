@@ -24,19 +24,17 @@ namespace Client.Controllers
         }
 
         [HttpPost]
-        public  ActionResult Register( RegisterDto registerDto)
+        public  async Task<ActionResult> Register(string username, RegisterDto registerDto)
         {
       
             if (ModelState.IsValid )
             {
                 HttpClient hc = new HttpClient();
                 hc.BaseAddress = new Uri("https://localhost:44369/Auth/Register");
-                var insertrec = hc.PostAsJsonAsync<RegisterDto>("/Auth/Register", registerDto);
-                insertrec.Wait();
-                var saverec = insertrec.Result;
-                if (saverec.IsSuccessStatusCode)
+                var insertrec = await hc.PostAsJsonAsync<RegisterDto>("/Auth/Register", registerDto);
+                if (insertrec.IsSuccessStatusCode)
                 {
-                    ViewBag.Message = "The User " + " ' "+ registerDto.Username + " ' " + "is Registered succesfully";
+                    ViewBag.Message = "The User " + " ' " + registerDto.Username + " ' " + "is Registered succesfully";
                     return View();
                 }
             }

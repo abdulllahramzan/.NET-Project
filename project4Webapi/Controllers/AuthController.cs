@@ -16,12 +16,12 @@ namespace project4Webapi.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IAuthRepository _authRepo;
-        private readonly DataContext _context;
+       
 
-        public AuthController(IAuthRepository authRepo, DataContext context)
+        public AuthController(IAuthRepository authRepo)
         {
            _authRepo = authRepo;
-            _context = context;
+           
         }
 
         [HttpPost("Register")]
@@ -30,7 +30,7 @@ namespace project4Webapi.Controllers
             var response = await _authRepo.Register(
                 new User { Username = request.Username , Password = request.Password }
             );
-
+           
             return Ok(response);
         }
 
