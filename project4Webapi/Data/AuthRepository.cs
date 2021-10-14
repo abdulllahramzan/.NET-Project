@@ -20,6 +20,7 @@ namespace project4Webapi.Data
         }
         public async Task<string> Login(string username, string password)
         { 
+            
             var user = await _context.Users.FirstOrDefaultAsync(x => x.Username.ToLower().Equals(username.ToLower()));
             
             if (user == null)
@@ -46,7 +47,7 @@ namespace project4Webapi.Data
 
                     var tokenHandler = new JwtSecurityTokenHandler();
                     var token = tokenHandler.CreateToken(tokenDescriptor);
-                
+              
                     string response =tokenHandler.WriteToken(token);
                     return response;
                 
