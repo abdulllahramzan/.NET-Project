@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace project4Webapi.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Seller, Admin")]
     [ApiController]
     [Route("[controller]")]
     public class ProductController : ControllerBase

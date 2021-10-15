@@ -19,26 +19,29 @@ namespace Client.Controllers
     public class ProductController : Controller
     {
 
-        public  async Task<IActionResult> Product()
+        public  async Task<IActionResult> Product(string products)
         {
+            
             var product = await GetProduct();
             return View(product);
         }
+       
 
         [HttpGet]
         public async Task<List<Product>> GetProduct()
         {
             string baseUrl = "https://localhost:44369/Product";
             var accesstoken = HttpContext.Session.GetString("JWToken");
-            var url = baseUrl;
-            HttpClient client = new HttpClient();
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accesstoken);
-            string jsonStr = await client.GetStringAsync(url);
-            var res = JsonConvert.DeserializeObject<List<Product>>(jsonStr).ToList();
-            return res;
+                var url = baseUrl;
+                HttpClient client = new HttpClient();
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accesstoken);
+                string jsonStr = await client.GetStringAsync(url);
+                var res = JsonConvert.DeserializeObject<List<Product>>(jsonStr).ToList();
+                return res;
+         
         }
-        
-       public IActionResult Create()
+  
+            public IActionResult Create()
         {
             return View();
         }

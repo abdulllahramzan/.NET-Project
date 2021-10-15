@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using project4Webapi.Model;
 using System;
@@ -6,6 +7,7 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 
 namespace project4Webapi.Data
@@ -14,9 +16,12 @@ namespace project4Webapi.Data
     {
         private readonly DataContext _context;
 
-        public AuthRepository(DataContext context )
+        private readonly IConfiguration _configuration;
+        public AuthRepository(DataContext context, IConfiguration configuration)
         {
+            _configuration = configuration;
             _context = context;
+
         }
         public async Task<string> Login(string username, string password)
         { 
@@ -34,26 +39,67 @@ namespace project4Webapi.Data
                     var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Name, user.Username)
+                new Claim(ClaimTypes.Name, user.Username),
+                new Claim(ClaimTypes.Role, user.Role)
             };
-                    var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes("hey_my_top_secret_key"));
-                    var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
-                    var tokenDescriptor = new SecurityTokenDescriptor
-                    {
-                        Subject = new ClaimsIdentity(claims),
-                        Expires = System.DateTime.Now.AddDays(1),
-                        SigningCredentials = creds
-                    };
 
-                    var tokenHandler = new JwtSecurityTokenHandler();
-                    var token = tokenHandler.CreateToken(tokenDescriptor);
-              
-                    string response =tokenHandler.WriteToken(token);
-                    return response;
-                
+                var accessToken = GenerateAccessToken(claims);
+                var refreshToken = GenerateRefreshToken();
+                user.RefreshToken = refreshToken;
+                user.RefreshTokenExpiryTime = DateTime.Now.AddDays(1);
+                _context.SaveChanges();
+
+                //string response = tokenHandler.WriteToken(token);
+                string res = accessToken; /*"Access Token : " + accessToken + "\n " + "Refresh Token : " + refreshToken*/
+                return res; 
+
             }
             string response1 = "Wrong  Username or Password";
             return response1;
+        }
+      
+        public string GenerateAccessToken(IEnumerable<Claim> claims)
+        {
+
+            var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_configuration.GetSection("AppSettings:Token").Value));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(claims),
+                Expires = DateTime.Now.AddSeconds(59),
+                SigningCredentials = creds
+
+            };
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            return tokenHandler.WriteToken(token);
+        }
+        public string GenerateRefreshToken()
+        {
+            var randomNumber = new byte[32];
+            using (var rng = RandomNumberGenerator.Create())
+            {
+                rng.GetBytes(randomNumber);
+                return Convert.ToBase64String(randomNumber);
+            }
+        }
+        public ClaimsPrincipal GetPrincipalFromExpiredToken(string token)
+        {
+            var tokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateAudience = false, 
+                ValidateIssuer = false,
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_configuration.GetSection("AppSettings:Token").Value)),
+                ValidateLifetime = false 
+            };
+            var tokenHandler = new JwtSecurityTokenHandler();
+            SecurityToken securityToken;
+            var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out securityToken);
+            var jwtSecurityToken = securityToken as JwtSecurityToken;
+            //if (jwtSecurityToken == null || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
+            //    throw new SecurityTokenException("Invalid token");
+            return principal;
         }
 
         public async Task<string> Register(User user)

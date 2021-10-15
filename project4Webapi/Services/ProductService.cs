@@ -29,6 +29,7 @@ namespace project4Webapi.Services
         }
 
         private int GetUserId() => int.Parse(_httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier));
+        private string GetUserRole() => _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.Role);
         public async Task<List<GetProductDto>> AddProduct(AddProductDto newProduct)
         {
             Product product = _mapper.Map<Product>(newProduct);
@@ -55,7 +56,10 @@ namespace project4Webapi.Services
 
         public async Task<List<GetProductDto>> Get()
         {
-            var dbProducts = await _context.Products.Where(c => c.User.Id == GetUserId()).ToListAsync();
+            var dbProducts = 
+                GetUserRole().Equals("Admin") ?
+                await _context.Products.ToListAsync() :
+                await _context.Products.Where(c => c.User.Id == GetUserId()).ToListAsync();
             var response = dbProducts.Select(c => _mapper.Map<GetProductDto>(c)).ToList();
             return response;
         }

@@ -30,6 +30,14 @@ namespace project4Webapi
 
         public IConfiguration Configuration { get; }
 
+        //private bool CustomLifetimeValidator(DateTime? notBefore, DateTime? expires, SecurityToken tokenToValidate, TokenValidationParameters @param)
+        //{
+        //   if (expires != null)
+        //    {
+        //        return expires > DateTime.UtcNow;
+        //    }
+        //    return false;
+        //}
         public void ConfigureServices(IServiceCollection services)
         {
 
@@ -48,12 +56,17 @@ namespace project4Webapi
             });
              services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options => {
+                   
                         options.TokenValidationParameters   = new TokenValidationParameters
-                        { 
+                        {
+                            ClockSkew = TimeSpan.Zero,
                             ValidateIssuerSigningKey = true,
-                           IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.ASCII.GetBytes("hey_my_top_secret_key")),
+                           IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.ASCII.GetBytes(Configuration.GetSection("AppSettings:Token").Value)),
                             ValidateIssuer = false,
+                           // LifetimeValidator = CustomLifetimeValidator,
                             ValidateAudience = false
+
+                            
                         };
                 });
             services.AddDbContext<DataContext>(options =>
