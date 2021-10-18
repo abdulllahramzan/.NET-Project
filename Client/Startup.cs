@@ -38,7 +38,7 @@ namespace Client
                    options.TokenValidationParameters = new TokenValidationParameters
                    {
                        ValidateIssuerSigningKey = true,
-                       IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.ASCII.GetBytes("hey_my_top_secret_key")),
+                       IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.ASCII.GetBytes("this is hey my top secret key")),
                        ValidateIssuer = false,
                        ValidateAudience = false
                    };
@@ -72,7 +72,7 @@ namespace Client
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=Auth}/{action=Login}/{id?}");
             });
         }
     }
