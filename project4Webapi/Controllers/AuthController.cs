@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using project4Webapi.Data;
 using project4Webapi.Dtos.User;
@@ -15,13 +16,14 @@ namespace project4Webapi.Controllers
     [Route("[controller]")]
     public class AuthController : ControllerBase
     {
+        private readonly DataContext _context;
         private readonly IAuthRepository _authRepo;
-       
 
-        public AuthController(IAuthRepository authRepo)
+        public AuthController(DataContext context, IAuthRepository authRepo)
         {
-           _authRepo = authRepo;
-           
+            _context = context;
+            _authRepo = authRepo;
+
         }
 
         [HttpPost("Register")]
@@ -38,21 +40,25 @@ namespace project4Webapi.Controllers
         public async Task<ActionResult<string>> Login(LoginDto request)
         {
             var response = await _authRepo.Login(
-              request.Username, request.Password 
+              request.Username, request.Password
            );
-           
-            //var cookieOptions = new Microsoft.AspNetCore.Http.CookieOptions()
-            //{
-            //    Path = "/",
-            //    HttpOnly = true,
-            //    IsEssential = true,
-            //    Expires = DateTime.Now.AddHours(1),
-            //};
-            //var user = await _context.Users.FirstOrDefaultAsync(x => x.Username == request.Username );
-            //Response.Cookies.Append("token", _authRepo.CreateToken(user), cookieOptions);
+
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.Username.ToLower().Equals(request.Username.ToLower()));
+            var refreshToken = _authRepo.GenerateRefreshToken();
+            user.RefreshToken = refreshToken;
+            user.RefreshTokenExpiryTime = DateTime.Now.AddDays(1);
+            _context.SaveChanges();
+
+            var cookieOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                Expires = DateTime.UtcNow.AddDays(1)
+            };
+
+            Response.Cookies.Append("RefreshToken", refreshToken, cookieOptions);
 
             return Ok(response);
         }
-
+   
     }
 }

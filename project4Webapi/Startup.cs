@@ -65,8 +65,6 @@ namespace project4Webapi
                             ValidateIssuer = false,
                            // LifetimeValidator = CustomLifetimeValidator,
                             ValidateAudience = false
-
-                            
                         };
                 });
             services.AddDbContext<DataContext>(options =>

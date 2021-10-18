@@ -78,7 +78,7 @@ namespace Client.Controllers
             return Redirect("~/Auth/Login");
         }
 
-        
+       
 
     }
 }

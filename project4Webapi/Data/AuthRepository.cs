@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using project4Webapi.Model;
@@ -44,13 +45,8 @@ namespace project4Webapi.Data
             };
 
                 var accessToken = GenerateAccessToken(claims);
-                var refreshToken = GenerateRefreshToken();
-                user.RefreshToken = refreshToken;
-                user.RefreshTokenExpiryTime = DateTime.Now.AddDays(1);
-                _context.SaveChanges();
-
-                //string response = tokenHandler.WriteToken(token);
-                string res = accessToken; /*"Access Token : " + accessToken + "\n " + "Refresh Token : " + refreshToken*/
+               
+                string res = accessToken;
                 return res; 
 
             }
@@ -66,7 +62,7 @@ namespace project4Webapi.Data
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.Now.AddSeconds(59),
+                Expires = DateTime.Now.AddMinutes(15),
                 SigningCredentials = creds
 
             };
@@ -83,6 +79,7 @@ namespace project4Webapi.Data
                 return Convert.ToBase64String(randomNumber);
             }
         }
+        
         public ClaimsPrincipal GetPrincipalFromExpiredToken(string token)
         {
             var tokenValidationParameters = new TokenValidationParameters

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using project4Webapi.Data;
 using project4Webapi.Model;
@@ -43,14 +44,25 @@ namespace project4Webapi.Controllers
             }
             var newAccessToken = _authRepo.GenerateAccessToken(principal.Claims);
             var newRefreshToken = _authRepo.GenerateRefreshToken();
+ 
+            var cookieOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                Expires = DateTime.UtcNow.AddDays(1)
+            };
+
+            Response.Cookies.Append("RefreshToken", newRefreshToken, cookieOptions);
+           
             user.RefreshToken = newRefreshToken;
             _context.SaveChanges();
             return new ObjectResult(new
             {
                 accessToken = newAccessToken,
-                refreshToken = newRefreshToken
+                refreshToken = newRefreshToken,
+                
             });
         }
+     
 
         [HttpPost, Authorize]
         [Route("revoke")]
