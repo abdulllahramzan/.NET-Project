@@ -52,8 +52,9 @@ namespace project4Webapi.Controllers
 
             var cookieOptions = new CookieOptions
             {
+                IsEssential = true,
                 HttpOnly = true,
-                Expires = DateTime.UtcNow.AddDays(1)
+                Expires = DateTime.Now.AddDays(1)
             };
             Response.Cookies.Append("RefreshToken", refreshToken, cookieOptions);
           

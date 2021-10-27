@@ -1,16 +1,12 @@
-
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Client
 {
@@ -33,8 +29,13 @@ namespace Client
                 options.Cookie.HttpOnly = true;
                 options.Cookie.IsEssential = true;
             });
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-               .AddJwtBearer(options => {
+            services.AddAuthentication( options =>
+            {
+                options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            })
+               .AddJwtBearer(options =>
+               {
+                   
                    options.TokenValidationParameters = new TokenValidationParameters
                    {
                        ValidateIssuerSigningKey = true,
@@ -42,9 +43,19 @@ namespace Client
                        ValidateIssuer = false,
                        ValidateAudience = false
                    };
-               });
-
-
+               })
+               .AddCookie()
+               
+               .AddGoogle(options =>
+              {
+                  options.ClientId = "370011733043-pf6un4i10hi4nla5s5sbi47hv0nfhfve.apps.googleusercontent.com";
+                  options.ClientSecret = "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";
+              })
+               .AddFacebook(options =>
+              { 
+                  options.AppId = "996907804208325";
+                  options.ClientSecret = "965ea9ff7f4df109aaaad3cdcb3b56f7";
+              });
 
         }
 

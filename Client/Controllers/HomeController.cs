@@ -27,23 +27,23 @@ namespace Client.Controllers
             return View();
         }
 
-        [HttpGet]
+       [HttpGet]
         public IActionResult Index(LoginDto loginDto)
         {
             var accesstoken = HttpContext.Session.GetString("JWToken");
             HttpClient client = new HttpClient();
-           if (accesstoken == null)
+            if (accesstoken == null)
             {
                 return Unauthorized();
             }
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(accesstoken);
-            
+           
 
             return View();
         }
 
+       
+    }
 
-      }
-
-  }
+}
 

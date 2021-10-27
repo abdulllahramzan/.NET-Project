@@ -102,6 +102,7 @@ namespace Client.Controllers
             return RedirectToAction("Product");
         }
 
+       
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -125,6 +126,7 @@ namespace Client.Controllers
             
               return View(res);              
         }
+
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -139,6 +141,27 @@ namespace Client.Controllers
             JsonConvert.DeserializeObject<Product>(JsonStr);
             await client.DeleteAsync(url);
             return RedirectToAction("product");
+        }
+
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+            string baseUrl = "https://localhost:44369/Product/";
+            var accesstoken = HttpContext.Session.GetString("JWToken");
+            var url = baseUrl + id;
+            HttpClient client = new HttpClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accesstoken);
+            string JsonStr = await client.GetStringAsync(url);
+            var products = JsonConvert.DeserializeObject<Product>(JsonStr);
+            if (products == null)
+            {
+                return NotFound();
+            }
+            return View(products);
+
         }
     }
 }

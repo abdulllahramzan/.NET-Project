@@ -21,7 +21,7 @@ namespace project4Webapi.Controllers
             _productService = productService;
         }
 
-       [HttpGet]
+        [HttpGet]
         public async Task<ActionResult<List<GetProductDto>>> Get()
         {
             return Ok(await _productService.Get());

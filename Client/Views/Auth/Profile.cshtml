@@ -1,0 +1,8 @@
+﻿
+@{
+}
+<h1>Profile</h1>
+@if (Context.User.Identity.IsAuthenticated)
+{
+    <h4>Hello @User.Identity.Name</h4>
+}

@@ -1,6 +1,10 @@
 ﻿
 using Client.Dtos;
 using Client.Model;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Facebook;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -73,13 +77,36 @@ namespace Client.Controllers
             }
             
         }
-        public IActionResult Logoff()
+        public async Task<IActionResult> Logout()
         {
-            HttpContext.Session.Clear();
+            await HttpContext.SignOutAsync();
+             HttpContext.Session.Clear();
             return Redirect("~/Auth/Login");
         }
 
-       
+        public async Task GoogleLogin()
+        {
+            await HttpContext.ChallengeAsync(GoogleDefaults.AuthenticationScheme, new AuthenticationProperties()
+            {
+                RedirectUri = Url.Action("Profile")
+            });
+        }
+
+        public async Task FacebookLogin()
+        {
+            await HttpContext.ChallengeAsync(FacebookDefaults.AuthenticationScheme, new AuthenticationProperties()
+            {
+                RedirectUri = Url.Action("Profile")
+            });
+        }
+
+
+        [Authorize]
+        public IActionResult Profile()
+        {
+
+            return View();
+        }
 
     }
 }
