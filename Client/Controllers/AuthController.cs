@@ -71,7 +71,9 @@ namespace Client.Controllers
                         return View();
                     }
                     return Redirect("~/Product/Product");
-                }       
+                }
+               
+                 
             }
             
         }

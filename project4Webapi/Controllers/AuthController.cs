@@ -48,7 +48,7 @@ namespace project4Webapi.Controllers
             var refreshToken = _authRepo.GenerateRefreshToken();
             user.RefreshToken = refreshToken;
             user.RefreshTokenExpiryTime = DateTime.Now.AddDays(1);
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
 
             var cookieOptions = new CookieOptions
             {

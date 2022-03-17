@@ -62,7 +62,7 @@ namespace project4Webapi.Data
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.Now.AddSeconds(58),
+                Expires = DateTime.Now.AddMinutes(2),
                 SigningCredentials = creds
             };
             var tokenHandler = new JwtSecurityTokenHandler();

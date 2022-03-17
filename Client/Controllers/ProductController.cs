@@ -41,7 +41,7 @@ namespace Client.Controllers
          
         }
   
-        public IActionResult Create()
+            public IActionResult Create()
         {
             return View();
         }
@@ -53,7 +53,7 @@ namespace Client.Controllers
             string baseUrl = "https://localhost:44369/Product/Add";
             var accesstoken = HttpContext.Session.GetString("JWToken");
             var url = baseUrl;
-            HttpClient client = new ();
+            HttpClient client = new HttpClient();
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accesstoken);
 
             var stringContent = new StringContent(JsonConvert.SerializeObject(product), Encoding.UTF8, "application/json");
