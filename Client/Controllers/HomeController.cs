@@ -16,11 +16,11 @@ using System.Threading.Tasks;
 
 namespace Client.Controllers
 {
-   
+    
     public class HomeController : Controller
     {
-       
         [Authorize]
+
         public IActionResult Index()
         {
 
@@ -37,7 +37,7 @@ namespace Client.Controllers
                 return Unauthorized();
             }
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(accesstoken);
-           
+
 
             return View();
         }

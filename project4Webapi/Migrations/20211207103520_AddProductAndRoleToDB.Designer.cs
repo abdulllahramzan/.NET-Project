@@ -10,8 +10,8 @@ using project4Webapi.Data;
 namespace project4Webapi.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20210923082717_UserProductRelationship")]
-    partial class UserProductRelationship
+    [Migration("20211207103520_AddProductAndRoleToDB")]
+    partial class AddProductAndRoleToDB
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -53,6 +53,18 @@ namespace project4Webapi.Migrations
 
                     b.Property<string>("Password")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RefreshToken")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("RefreshTokenExpiryTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(max)")
+                        .HasDefaultValue("Seller");
 
                     b.Property<string>("Username")
                         .HasColumnType("nvarchar(max)");

@@ -12,6 +12,6 @@ namespace Client.Model
         public int ProdId { get; set; }
         public string ProdName { get; set; } = "Empty";
         public string ProdPrice { get; set; } = "Empty";
-    
+        public int UserId { get; set; }
     }
 }

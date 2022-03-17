@@ -9,6 +9,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace project4Webapi.Services
@@ -33,7 +35,6 @@ namespace project4Webapi.Services
         public async Task<List<GetProductDto>> AddProduct(AddProductDto newProduct)
         {
             Product product = _mapper.Map<Product>(newProduct);
-            product.User = await _context.Users.FirstOrDefaultAsync(u => u.Id == GetUserId());
             _context.Products.Add(product);
             await _context.SaveChangesAsync();
             var response = await _context.Products
